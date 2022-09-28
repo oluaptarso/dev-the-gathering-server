@@ -59,8 +59,17 @@ export default class CardService {
     for (let i = 0; i < this.randomNumbersNeeded; i++) {
       const randomSplittedData = this.splitRandomInThreeParts(+randomData[i]);
       const card = this.revealCard(randomSplittedData, cardQuantitiesByRarity);
-      openedCards[card.externalId] = card;
-      openedCardsExternalIds.push(card.externalId);
+      /*
+        If the user gets repeated cards in the same booster pack, we increment the quantity of the card in the hashmap,
+        verify if one of them is foil and guarantee that the saved card is foil too.
+      */
+      if (card.externalId in openedCards) {
+        openedCards[card.externalId].quantity++;
+        openedCards[card.externalId].foil = openedCards[card.externalId].foil || card.foil;
+      } else {
+        openedCards[card.externalId] = card;
+        openedCardsExternalIds.push(card.externalId);
+      }
     }
 
     const ownedCards = await this.findByOwnerAndExternalIds(ownerId, openedCardsExternalIds);
@@ -76,12 +85,12 @@ export default class CardService {
         if (openedCard.foil && !ownedCard.foil) {
           ownedCard.foil = true;
         }
-        ownedCard.quantity++;
+        ownedCard.quantity += openedCard.quantity;
         /**
-         * @dev if the card has the requirements to evolve, level up and resets the quantity.
+         * @dev if the card has the requirements to evolve, level up and ajust the quantity.
          */
-        if (ownedCard.quantity == ownedCard.level * 2) {
-          ownedCard.quantity = 0;
+        if (ownedCard.quantity >= ownedCard.level * 2) {
+          ownedCard.quantity = ownedCard.quantity % (ownedCard.level * 2);
           ownedCard.level++;
         }
         ownedCard.updatedAt = +new Date();
