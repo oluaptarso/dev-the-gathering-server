@@ -13,3 +13,7 @@ export class User {
     return moment().startOf('day').diff(moment(this.lastBoosterPackOpenedAt).startOf('day'), 'days') > 0;
   }
 }
+export type UserAuthData = {
+  id: string;
+  emailVerified: boolean;
+}

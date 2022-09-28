@@ -8,13 +8,16 @@ export const CardQuery = extendType({
   definition(t) {
     t.nonNull.list.nonNull.field('cards', {
       type: CardObjectType,
-      async resolve(parent, args, context, info) {
-        if (!context.userId) {
+      async resolve(parent, args, context/* , info*/) {
+        if (!context.userData || !context?.userData.id) {
           throw Error('Unauthorized request.');
         }
-        functions.logger.log('USER::', context.userId);
+        if (!context.userData.emailVerified) {
+          throw Error('User email not verified.');
+        }
+        functions.logger.log('USER::', context.userData);
         const cardService = new CardService(context.db);
-        return await cardService.findAllByOwnerId(context.userId);
+        return await cardService.findAllByOwnerId(context.userData.id);
       },
     });
   },

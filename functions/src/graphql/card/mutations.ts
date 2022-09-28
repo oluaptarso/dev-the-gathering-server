@@ -14,16 +14,21 @@ export const OpenBoosterPackMutation = extendType({
       //   },
 
       async resolve(parent, args, context) {
-        functions.logger.log('USER::', context.userId);
-        if (!context.userId) {
+        if (!context.userData || !context?.userData.id) {
           throw Error('Unauthorized request.');
         }
+        if (!context.userData.emailVerified) {
+          throw Error('User email not verified.');
+        }
+        functions.logger.log('USER::', context.userData);
         const userService = new UserService(context.db);
-        const user = await userService.find(context.userId);
-        if (!user) throw Error('User doesn\'t exist');
+        const user = await userService.find(context.userData.id);
+
+        if (!user) throw Error(`User doesn't exist`);
+
         if (user.canOpenBoosterPack) {
           const cardService = new CardService(context.db);
-          const cards = await cardService.openBoosterPackage(context.userId);
+          const cards = await cardService.openBoosterPackage(context.userData.id);
           user.lastBoosterPackOpenedAt = +new Date();
           await userService.update(user);
           return cards;
