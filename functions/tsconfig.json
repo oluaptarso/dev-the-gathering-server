@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2018",
+    "skipLibCheck": true,
+    //"strict": false,
+    //"lib": ["es2018", "esnext.asynciterable"],
+    "lib": ["esnext"],
+    "strictPropertyInitialization": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    //"baseUrl": "./",
+  },
+  "compileOnSave": true,
+  "include": ["src"]
+}
