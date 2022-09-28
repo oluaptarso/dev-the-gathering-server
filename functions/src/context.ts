@@ -16,7 +16,6 @@ export const context = async ({ req }: { req: Request }): Promise<Context> => {
     const token = req.headers.authorization.split('Bearer ')[1];
     try {
       const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-      console.log('DecodedToken', decodedToken);
       userData = {
         id: decodedToken.uid,
         emailVerified: decodedToken.email_verified || false,
