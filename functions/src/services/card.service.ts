@@ -66,6 +66,14 @@ export default class CardService {
       if (card.externalId in openedCards) {
         openedCards[card.externalId].quantity++;
         openedCards[card.externalId].foil = openedCards[card.externalId].foil || card.foil;
+
+        card.ownerId = ownerId;
+        card.quantity = 0;
+        card.level = 1;
+        card.createdAt = +new Date();
+        card.updatedAt = card.createdAt;
+
+        cardsToReturn.push(card);
       } else {
         openedCards[card.externalId] = card;
         openedCardsExternalIds.push(card.externalId);
@@ -85,7 +93,7 @@ export default class CardService {
         if (openedCard.foil && !ownedCard.foil) {
           ownedCard.foil = true;
         }
-        ownedCard.quantity += openedCard.quantity;
+        ownedCard.quantity += (openedCard.quantity + 1);
         /**
          * @dev if the card has the requirements to evolve, level up and ajust the quantity.
          */
@@ -98,8 +106,11 @@ export default class CardService {
         cardsToReturn.push(ownedCard);
       } else {
         openedCard.ownerId = ownerId;
-        openedCard.quantity = 0;
-        openedCard.level = 1;
+        openedCard.quantity = openedCard.quantity > 0 ? openedCard.quantity : 0;
+        if (openedCard.quantity >= openedCard.level * 2) {
+          openedCard.quantity = openedCard.quantity % (openedCard.level * 2);
+          openedCard.level++;
+        }
         openedCard.createdAt = +new Date();
         openedCard.updatedAt = openedCard.createdAt;
         const res = await this._fireStoreContext.collection('cards').add(instanceToPlain(openedCard));
@@ -136,6 +147,8 @@ export default class CardService {
     const foil = (randoms[2] % 100) + 1 <= 5;
     const card = new Card();
     card.foil = foil;
+    card.quantity = 0;
+    card.level = 1;
 
     let quantityCardsOfType = 0;
     let defaultQuantity = 0;
