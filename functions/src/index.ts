@@ -10,6 +10,7 @@ const apolloServer = new ApolloServer({
   schema,
   context,
   introspection,
+  persistedQueries: false,
   plugins: [introspection ? ApolloServerPluginLandingPageGraphQLPlayground : ApolloServerPluginLandingPageLocalDefault],
 });
 
