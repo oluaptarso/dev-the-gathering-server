@@ -2,6 +2,7 @@ import * as _firestore from '@google-cloud/firestore';
 import { CardRarityEnum } from '../enums/card-rarity';
 import { instanceToPlain } from 'class-transformer';
 import { Card } from '../types/card';
+import _ = require('lodash');
 
 export default class CardService {
   randomNumbersNeeded = 3;
@@ -134,9 +135,9 @@ export default class CardService {
   private getRandomCardData = (): string => {
     const chars = '0123456789';
     const stringLength = 77;
-    let randomstring = Math.floor(Math.random() * (9 - 1) + 1).toString();
+    let randomstring = Math.floor(_.random(0, 9)).toString();
     for (let i = 1; i < stringLength; i++) {
-      const rnum = Math.floor(Math.random() * chars.length);
+      const rnum = _.random(0, 9);
       randomstring += chars.substring(rnum, rnum + 1);
     }
     return randomstring;
