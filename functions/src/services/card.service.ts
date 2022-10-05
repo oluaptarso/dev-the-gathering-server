@@ -143,8 +143,8 @@ export default class CardService {
   };
 
   private revealCard = (randoms: number[], cardQuantitiesByRarity: Map<number, number>): Card => {
-    const rarityChance = (randoms[0] % 100) + 1;
-    const foil = (randoms[2] % 100) + 1 <= 5;
+    const rarityChance = (randoms[0] % 100);
+    const foil = (randoms[2] % 100) <= 4;
     const card = new Card();
     card.foil = foil;
     card.quantity = 0;
@@ -153,12 +153,12 @@ export default class CardService {
     let quantityCardsOfType = 0;
     let defaultQuantity = 0;
 
-    if (rarityChance >= 50) {
+    if (rarityChance >= 60) {
       card.rarity = CardRarityEnum.COMMON;
       defaultQuantity = this.defaultCardQuantitiesByRarity.get(CardRarityEnum.COMMON) as number;
       quantityCardsOfType = cardQuantitiesByRarity.get(CardRarityEnum.COMMON) || defaultQuantity;
       card.externalId = (randoms[1] % quantityCardsOfType) + 1;
-    } else if (rarityChance >= 30 && rarityChance <= 49) {
+    } else if (rarityChance >= 30 && rarityChance <= 59) {
       card.rarity = CardRarityEnum.UNCOMMON;
       defaultQuantity = this.defaultCardQuantitiesByRarity.get(CardRarityEnum.UNCOMMON) as number;
       quantityCardsOfType = cardQuantitiesByRarity.get(CardRarityEnum.UNCOMMON) || defaultQuantity;
